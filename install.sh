@@ -81,8 +81,11 @@ sudo -u www-data php occ maintenance:install \
 # Create a service to scan ownCloud files periodically
 cat > /var/www/owncloud/smb.sh << 'EOL'
 #!/bin/bash
-chown -R www-data:www-data /var/www/owncloud/data/
-sudo -u www-data php /var/www/owncloud/occ files:scan --all
+cd /var/www/owncloud/data
+chown -R www-data:www-data .
+find . -type d -exec chmod g+rwx {} +
+find . -type f -exec chmod g+rw {} +
+sudo -u www-data php ./occ files:scan --all
 sleep 5
 EOL
 chmod +x /var/www/owncloud/smb.sh
