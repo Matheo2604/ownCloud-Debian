@@ -142,8 +142,7 @@ echo "[$user]
         browseable = yes
         create mask = 0700" >> /etc/samba/smb.conf
 
-chgrp -R www-data /var/www/owncloud/data && chmod -R g+w /var/www/owncloud/data
-chown -R www-data:www-data /var/www/owncloud/data/$user
+chgrp -R www-data /var/www/owncloud/data && chmod -R g+rwx /var/www/owncloud/data
 usermod -a -G www-data $user
 systemctl restart smb smbd apache2
 
