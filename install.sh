@@ -145,12 +145,12 @@ echo "[$user]
         browseable = yes
         create mask = 0700" >> /etc/samba/smb.conf
 
-chgrp -R www-data /var/www/owncloud/data && chmod -R g+rwx /var/www/owncloud/data
 usermod -a -G www-data $user
 systemctl restart smb smbd apache2
 
 EOF
 
+chgrp -R www-data /var/www/owncloud/data && chmod -R g+rwx /var/www/owncloud/data
 chmod +x /var/www/owncloud/create_user.sh
 
 # Add alias for user creation script
