@@ -116,36 +116,36 @@ while true; do
   echo -e ''
   read -sp "Repeat the password: " password_verification
   echo -e ''
-  if [ "$password" = "$password_verification" ]; then
+  if [ "\$password" = "\$password_verification" ]; then
     break
   fi
 done
 
-# Now execute the rest of the script with the $user and $password variables
+# Now execute the rest of the script with the \$user and \$password variables
 
 curl -X POST -u root:$owncloud_password \
-     -d userid=$user \
-     -d password=$password \
+     -d userid=\$user \
+     -d password=\$password \
      http://127.0.0.1/ocs/v1.php/cloud/users -H "OCS-APIREQUEST: true"
 
-useradd -m -s /bin/bash $user
-echo $user:$password | chpasswd
+useradd -m -s /bin/bash \$user
+echo \$user:\$password | chpasswd
 
-smbpasswd -a $user << eof
-$password
-$password
+smbpasswd -a \$user << eof
+\$password
+\$password
 eof
 
-mkdir -p /var/www/owncloud/data/$user/files
+mkdir -p /var/www/owncloud/data/\$user/files
 
-echo "[$user]
-        path = /var/www/owncloud/data/$user/files
-        valid users = $user
+echo "[\$user]
+        path = /var/www/owncloud/data/\$user/files
+        valid users = \$user
         writable = yes
         browseable = yes
         create mask = 0700" >> /etc/samba/smb.conf
 
-usermod -a -G www-data $user
+usermod -a -G www-data \$user
 systemctl restart smb smbd apache2
 
 EOF
