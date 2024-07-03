@@ -82,7 +82,7 @@ sudo -u www-data php occ maintenance:install \
    --admin-pass "$owncloud_password"
 
 # Create a service to scan ownCloud files periodically
-cat > /var/www/owncloud/smb.sh << 'EOL'
+cat > /var/www/owncloud/smb.sh << EOL
 #!/bin/bash
 cd /var/www/owncloud/data
 chown -R www-data:www-data .
@@ -93,7 +93,7 @@ sleep $time
 EOL
 chmod +x /var/www/owncloud/smb.sh
 
-cat > /etc/systemd/system/ownCloud_smb_scan.service << 'EOL'
+cat > /etc/systemd/system/ownCloud_smb_scan.service << EOL
 [Unit]
 Description=Scan OwnCloud files every $time seconds
 
