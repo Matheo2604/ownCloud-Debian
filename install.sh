@@ -5,16 +5,19 @@
 # Clear the terminal and prompt the user for the ownCloud password
 clear
 while true; do
-    echo -e ''
+    echo ''
     read -sp "Password to use for ownCloud: " owncloud_password
-    echo -e ''
+    echo ''
     read -sp "Repeat the password: " owncloud_password_verification
-    echo -e ''
+    echo ''
     if [ "$owncloud_password" = "$owncloud_password_verification" ]; then
         break
     fi
 done
-echo
+echo -e "Please enter the time interval (in seconds) to wait between each file scan.\n 
+         The longer the interval, the smoother the file movement will be, but the shorter\n 
+         the interval, the more resource-intensive it will be. "
+read -p "(Default is 3 seconds): " time
 
 # Update package lists and install necessary packages
 apt-get update
@@ -86,13 +89,13 @@ chown -R www-data:www-data .
 find . -type d -exec chmod g+rwx {} +
 find . -type f -exec chmod g+rw {} +
 sudo -u www-data php ./occ files:scan --all
-sleep 5
+sleep $time
 EOL
 chmod +x /var/www/owncloud/smb.sh
 
 cat > /etc/systemd/system/ownCloud_smb_scan.service << 'EOL'
 [Unit]
-Description=Scan OwnCloud files every 5 seconds
+Description=Scan OwnCloud files every $time seconds
 
 [Service]
 ExecStart=/var/www/owncloud/smb.sh
@@ -146,7 +149,7 @@ echo "[\$user]
         create mask = 0700" >> /etc/samba/smb.conf
 
 usermod -a -G www-data \$user
-systemctl restart smb smbd apache2
+systemctl restart smb apache2
 
 EOF
 
