@@ -21,7 +21,7 @@ read -p "(Default is 3 seconds): " time
 
 # Update package lists and install necessary packages
 apt-get update
-apt-get -y install apache2 mariadb-server sudo
+apt-get -y install apache2 mariadb-server sudo curl gpg
 
 
 # Add PHP repository and install PHP 7.4 and necessary extensions
