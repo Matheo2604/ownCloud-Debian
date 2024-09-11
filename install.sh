@@ -1,45 +1,81 @@
-# ownCloud Installation Script
+#!/bin/bash
 
-This repository contains a bash script to install and configure ownCloud with Apache, MariaDB, and PHP on a Debian-based system.
+# This script installs and configures ownCloud with Apache, MariaDB, and PHP on a Debian-based system.
 
-## Prerequisites
+# Clear the terminal and prompt the user for the ownCloud password
+clear
+while true; do
+    echo ''
+    read -sp "Password to use for ownCloud: " owncloud_password
+    echo ''
+    read -sp "Repeat the password: " owncloud_password_verification
+    echo ''
+    if [ "$owncloud_password" = "$owncloud_password_verification" ]; then
+        break
+    fi
+done
 
-- A fresh installation of Debian 12.
-- Root or sudo access.
+# Update package lists and install necessary packages
+apt-get update
+apt-get -y install apache2 mariadb-server sudo curl gpg
 
-## Installation
 
-1. **Clone this repository:**
+# Add PHP repository and install PHP 7.4 and necessary extensions
+apt-get -y install apt-transport-https lsb-release ca-certificates wget
+wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg
+echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/php.list
+apt-get update
+apt-get -y install php7.4-{xml,intl,common,json,curl,mbstring,mysql,gd,imagick,zip,opcache} libapache2-mod-php7.4
+a2enmod php7.4
 
-    ```
-    $ git clone https://github.com/matheo2604/ownCloud
-    $ cd ownCloud
-    ```
+# Add ownCloud repository and install ownCloud
+echo 'deb https://download.opensuse.org/repositories/isv:/ownCloud:/server:/10/Debian_12/ /' > /etc/apt/sources.list.d/isv:ownCloud:server:10.list
+curl -fsSL https://download.opensuse.org/repositories/isv:/ownCloud:/server:/10/Debian_12/Release.key | gpg --dearmor > /etc/apt/trusted.gpg.d/isv_ownCloud_server_10.gpg
+apt update
+apt-get -y install owncloud-complete-files
 
-2. **Make the script executable:**
+# Configure Apache
+cat > /etc/apache2/sites-available/owncloud.conf << 'EOL'
+Alias / "/var/www/owncloud/"
+ErrorLog ${APACHE_LOG_DIR}/owncloud_error.log
+CustomLog ${APACHE_LOG_DIR}/owncloud_access.log combined
+<Directory /var/www/owncloud/>
+  Options +FollowSymlinks
+  AllowOverride All
 
-    ```
-    $ chmod +x install.sh
-    ```
+ <IfModule mod_dav.c>
+  Dav off
+ </IfModule>
 
-3. **Run the script:**
+ SetEnv HOME /var/www/owncloud
+ SetEnv HTTP_HOME /var/www/owncloud
 
-    ```
-    # ./install.sh
-    ```
+</Directory>
+EOL
 
-    You will be prompted to enter and confirm a password for the ownCloud root user.
+a2ensite owncloud.conf
+a2dissite 000-default.conf
+a2enmod rewrite mime unique_id
+apachectl -t
+systemctl restart apache2
 
-## Usage
+# Set up MariaDB
+mysql --password=$owncloud_password --user=root --host=localhost << eof
+  create database ownclouddb;
+  grant all privileges on ownclouddb.* to root@localhost identified by "$owncloud_password";
+  flush privileges;
+  quit
+eof
 
-After installation, you need to update the ownCloud configuration to specify the accessible network. Edit the following file:
+# Install ownCloud
+cd /var/www/owncloud
+sudo -u www-data php occ maintenance:install \
+   --database "mysql" \
+   --database-name "ownclouddb" \
+   --database-user "root"\
+   --database-pass "$owncloud_password" \
+   --admin-user "admin" \
+   --admin-pass "$owncloud_password"
 
-```
-# nano /var/www/owncloud/config/config.php
-# systemctl restart apache2
-```
-
-Notes
-
-    Ensure that your firewall settings allow access to the necessary services (HTTP, HTTPS).
-    The script assumes a clean Debian 12 installation and may not account for existing configurations or installations.
+# Reminder to update ownCloud configuration
+echo "Don't forget to change the accessible network in this file: /var/www/owncloud/config/config.php/"
