@@ -1,45 +1,19 @@
 # ownCloud Installation Script
 
-This repository contains a bash script to install and configure ownCloud with Apache, MariaDB, and PHP on a Debian-based system.
+This repository contains a bash script to install and configure ownCloud with Apache, MariaDB, PHP and ufw on a Debian-based system.
 
 ## Prerequisites
 
-- A fresh installation of Debian 12.
+- A fresh installation of Debian-based system.
 - Root or sudo access.
 
 ## Installation
 
-1. **Clone this repository:**
-
     ```
-    $ git clone https://github.com/matheo2604/ownCloud
-    $ cd ownCloud
+    bash <(curl -fsSL https://raw.githubusercontent.com/matheo2604/owncloud-debian/master/install.sh)
     ```
 
-2. **Make the script executable:**
+## Notes
 
-    ```
-    $ chmod +x install.sh
-    ```
-
-3. **Run the script:**
-
-    ```
-    # ./install.sh
-    ```
-
-    You will be prompted to enter and confirm a password for the ownCloud root user.
-
-## Usage
-
-After installation, you need to update the ownCloud configuration to specify the accessible network. Edit the following file:
-
-```
-# nano /var/www/owncloud/config/config.php
-# systemctl restart apache2
-```
-
-Notes
-
-    Ensure that your firewall settings allow access to the necessary services (HTTP, HTTPS).
-    The script assumes a clean Debian 12 installation and may not account for existing configurations or installations.
+    The script assumes a clean Debian 12 installation and may not take count for existing configurations or installations.
+    It also have a self-signed certificate & a ufw firewall included to take in consideration
