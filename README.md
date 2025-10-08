@@ -9,9 +9,7 @@ This repository contains a bash script to install and configure ownCloud with Ap
 
 ## Installation
 
-    ```
     bash <(curl -fsSL https://raw.githubusercontent.com/matheo2604/owncloud-debian/master/install.sh)
-    ```
 
 ## Notes
 
