@@ -25,12 +25,12 @@ apt-get -y install apt-transport-https lsb-release ca-certificates wget
 wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg
 echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/php.list
 apt-get update
-apt-get -y install php7.4-{xml,intl,common,json,curl,mbstring,mysql,gd,imagick,zip,opcache} libapache2-mod-php7.4
-a2enmod php7.4
+apt-get -y install php7.4-{xml,intl,common,json,curl,mbstring,mysql,gd,imagick,zip,opcache} libapache2-mod-php7.4 php7.4
 
 # Add ownCloud repository and install ownCloud
-echo 'deb https://download.opensuse.org/repositories/isv:/ownCloud:/server:/10/Debian_12/ /' > /etc/apt/sources.list.d/isv:ownCloud:server:10.list
-curl -fsSL https://download.opensuse.org/repositories/isv:/ownCloud:/server:/10/Debian_12/Release.key | gpg --dearmor > /etc/apt/trusted.gpg.d/isv_ownCloud_server_10.gpg
+wget https://download.owncloud.com/server/stable/owncloud-complete-latest.tar.bz2
+tar -xjf owncloud-complete-latest.tar.bz2
+cp -r owncloud /var/www
 apt update
 apt-get -y install owncloud-complete-files
 
