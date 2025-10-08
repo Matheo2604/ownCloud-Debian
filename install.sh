@@ -35,8 +35,8 @@ apt-get -y install php7.4-{xml,intl,common,json,curl,mbstring,mysql,gd,imagick,z
 
 
 # Add ownCloud repository and install ownCloud
-echo 'deb https://download.opensuse.org/repositories/isv:/ownCloud:/server:/10/Debian_12/ /' > /etc/apt/sources.list.d/isv:ownCloud:server:10.list
-curl -fsSL https://download.opensuse.org/repositories/isv:/ownCloud:/server:/10/Debian_12/Release.key | gpg --dearmor > /etc/apt/trusted.gpg.d/isv_ownCloud_server_10.gpg
+echo 'deb https://download.opensuse.org/repositories/isv:/ownCloud:/server:/10.14.0/Debian_12/ /' > /etc/apt/sources.list.d/isv:ownCloud:server:10.list
+curl -fsSL https://download.opensuse.org/repositories/isv:/ownCloud:/server:/10.14.0/Debian_12/Release.key | gpg --dearmor > /etc/apt/trusted.gpg.d/isv_ownCloud_server_10.gpg
 apt update
 apt-get -y install owncloud-complete-files
 
